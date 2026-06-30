@@ -1,0 +1,303 @@
+/* Inter font — @import must come before all other rules */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+html {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+body {
+  background: #ffffff;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   MARKDOWN — assistant response typography
+   ════════════════════════════════════════════════════════════════════════ */
+
+.markdown-content {
+  color: #1e293b;
+  font-size: 15px;
+  line-height: 1.8;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* ── Paragraphs ── */
+.md-p {
+  margin-bottom: 0.9rem;
+  line-height: 1.8;
+  color: #1e293b;
+}
+.md-p:last-child { margin-bottom: 0; }
+
+/* ── Headings ── */
+.md-h1 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 1.5rem 0 0.6rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid #f1f5f9;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+.md-h2 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 1.25rem 0 0.5rem;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+}
+.md-h3 {
+  font-size: 0.975rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 1.05rem 0 0.4rem;
+  line-height: 1.45;
+}
+.md-h1:first-child,
+.md-h2:first-child,
+.md-h3:first-child { margin-top: 0; }
+
+/* ── Lists ── */
+.md-ul,
+.md-ol {
+  list-style: none;
+  margin: 0.5rem 0 0.9rem;
+  padding-left: 0;
+}
+.md-ul:last-child,
+.md-ol:last-child { margin-bottom: 0; }
+
+.md-ul { padding-left: 1.25rem; }
+.md-ol {
+  padding-left: 1.75rem;
+  counter-reset: md-counter;
+}
+
+.md-li {
+  position: relative;
+  line-height: 1.75;
+  margin-bottom: 0.4rem;
+  color: #1e293b;
+  font-size: 15px;
+}
+.md-li:last-child { margin-bottom: 0; }
+
+/* Unordered bullet — absolute so it doesn't disturb multi-line wrapping */
+.md-ul > .md-li {
+  padding-left: 0.25rem;
+}
+.md-ul > .md-li::before {
+  content: "";
+  position: absolute;
+  left: -0.9rem;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #94a3b8;
+}
+
+/* Ordered number */
+.md-ol > .md-li {
+  counter-increment: md-counter;
+  padding-left: 0.125rem;
+}
+.md-ol > .md-li::before {
+  content: counter(md-counter) ".";
+  position: absolute;
+  left: -1.75rem;
+  top: 0;
+  width: 1.5rem;
+  text-align: right;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.75;
+}
+
+/* Suppress extra paragraph margins that ReactMarkdown adds inside list items */
+.md-li > .md-p          { margin-bottom: 0.2rem; }
+.md-li > .md-p:last-child { margin-bottom: 0; }
+
+/* Nested lists */
+.md-li > .md-ul,
+.md-li > .md-ol {
+  margin-top: 0.35rem;
+  margin-bottom: 0.1rem;
+}
+.md-li > .md-ul > .md-li::before {
+  width: 4px;
+  height: 4px;
+  background: #cbd5e1;
+  top: 0.65em;
+}
+
+/* ── Inline code ── */
+.inline-code {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 0.1em 0.45em;
+  font-size: 0.875em;
+  font-family: 'Fira Code', 'Cascadia Code', 'JetBrains Mono', ui-monospace, monospace;
+  color: #1d4ed8;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+/* ── Code block card — prevent prose styles from leaking into SyntaxHighlighter ── */
+.markdown-content .code-block-card {
+  margin: 1rem 0;
+}
+.markdown-content .code-block-card pre {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+.markdown-content .code-block-card pre > code,
+.markdown-content .code-block-card code {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-size: inherit !important;
+  color: inherit !important;
+  white-space: pre !important;
+}
+
+/* ── Strong / Em ── */
+.md-strong { font-weight: 650; color: #0f172a; }
+.md-em     { font-style: italic; color: #475569; }
+
+/* ── Links ── */
+.md-link {
+  color: #2563eb;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: #bfdbfe;
+  transition: color 0.15s, text-decoration-color 0.15s;
+}
+.md-link:hover {
+  color: #1d4ed8;
+  text-decoration-color: #2563eb;
+}
+
+/* ── Blockquote ── */
+.md-blockquote {
+  border-left: 3px solid #bfdbfe;
+  background: #f0f7ff;
+  padding: 0.75rem 1rem 0.75rem 1.125rem;
+  margin: 0.75rem 0 1rem;
+  border-radius: 0 8px 8px 0;
+  color: #334155;
+}
+.md-blockquote .md-p {
+  color: #334155;
+  margin-bottom: 0;
+  line-height: 1.7;
+}
+
+/* ── Divider ── */
+.md-hr {
+  border: none;
+  border-top: 1px solid #f1f5f9;
+  margin: 1.25rem 0;
+}
+
+/* ── Tables ── */
+.md-table-wrap {
+  overflow-x: auto;
+  margin: 0.875rem 0 1rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+.md-th {
+  background: #f8fafc;
+  padding: 9px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+.md-td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #374151;
+  line-height: 1.55;
+}
+.md-tr:last-child .md-td { border-bottom: none; }
+.md-tr:hover .md-td      { background: #f8fafc; }
+
+/* ════════════════════════════════════════════════════════════════════════
+   ANIMATIONS & UI CHROME
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Context menu dropdown ── */
+@keyframes dropdown-in {
+  from { opacity: 0; transform: scale(0.95) translateY(-4px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+.animate-dropdown {
+  animation: dropdown-in 0.12s ease-out forwards;
+  transform-origin: top right;
+}
+
+/* ── Streaming cursor ── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+.cursor-blink {
+  display: inline-block;
+  width: 2px;
+  height: 0.9em;
+  background: #2563eb;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  animation: blink 0.8s step-end infinite;
+}
+
+/* ── Typing dots ── */
+@keyframes typing-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
+  40%           { transform: scale(1);   opacity: 0.8; }
+}
+.typing-dot:nth-child(1) { animation: typing-dot 1.2s 0.00s infinite; }
+.typing-dot:nth-child(2) { animation: typing-dot 1.2s 0.20s infinite; }
+.typing-dot:nth-child(3) { animation: typing-dot 1.2s 0.40s infinite; }
+
+/* ── Message entrance ── */
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+.msg-animate { animation: msg-in 0.18s ease-out forwards; }
