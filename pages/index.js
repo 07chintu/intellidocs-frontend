@@ -19,7 +19,7 @@ export default function Home() {
   const [isUploading, setIsUploading]     = useState(false);
   const [inputText, setInputText]         = useState("");
   const [error, setError]                 = useState("");
-  const [sidebarOpen, setSidebarOpen]     = useState(true);
+  const [sidebarOpen, setSidebarOpen]     = useState(false);
 
   const bottomRef       = useRef(null);
   const textareaRef     = useRef(null);
@@ -35,6 +35,12 @@ export default function Home() {
   const activeConvo = conversations.find((c) => c.id === activeId) || null;
   const messages    = activeConvo?.messages || [];
   const isWelcome   = messages.length === 0;
+
+  // Open the sidebar by default on desktop; keep it collapsed on mobile
+  // so it doesn't cover the whole viewport on first load.
+  useEffect(() => {
+    if (window.innerWidth >= 768) setSidebarOpen(true);
+  }, []);
 
   // ── Persistence ────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -135,13 +141,17 @@ export default function Home() {
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
+  function closeSidebarOnMobile() {
+    if (window.innerWidth < 768) setSidebarOpen(false);
+  }
   function handleNewChat() {
     const c = createConversation();
     setConversations((prev) => [...prev, c]);
     setActiveId(c.id);
     setError("");
+    closeSidebarOnMobile();
   }
-  function handleSelectChat(id) { setActiveId(id); setError(""); }
+  function handleSelectChat(id) { setActiveId(id); setError(""); closeSidebarOnMobile(); }
   function handleDeleteChat(id) {
     setConversations((prev) => prev.filter((c) => c.id !== id));
     if (activeId === id) {
@@ -329,14 +339,14 @@ export default function Home() {
   const inputJSX = (
     <form onSubmit={handleSend} className="w-full">
       <input ref={fileInputRef} type="file" accept=".pdf,.docx,.doc,.txt,.md,.csv,.xlsx,.xls,.pptx,.json,.xml" className="hidden" onChange={handleUpload} />
-      <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-full px-3 py-1.5 shadow-sm hover:border-[#93c5fd] focus-within:border-[#2563eb] focus-within:shadow-[0_0_0_3px_rgb(37_99_235/0.12)] transition-all">
+      <div className="flex items-center gap-2 bg-white border border-gray-200 rounded-full px-4 py-2 shadow-sm hover:border-gray-300 focus-within:border-gray-300 focus-within:shadow-md transition-all">
 
         {/* + upload */}
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isUploading}
-          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-40"
+          className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors disabled:opacity-40"
           title="Upload document"
         >
           {isUploading ? (
@@ -357,7 +367,7 @@ export default function Home() {
           placeholder="Start typing.."
           disabled={isStreaming}
           rows={1}
-          className="flex-1 bg-transparent text-slate-800 placeholder-slate-400 resize-none outline-none text-[15px] leading-relaxed overflow-y-auto disabled:opacity-60"
+          className="flex-1 bg-transparent text-gray-800 placeholder-gray-400 resize-none outline-none text-[15px] leading-relaxed overflow-y-auto disabled:opacity-60"
           style={{ minHeight: "24px", maxHeight: "160px" }}
         />
 
@@ -366,10 +376,10 @@ export default function Home() {
           <button
             type="button"
             onClick={handleStop}
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
             title="Stop"
           >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="#475569">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="#4b5563">
               <rect x="5" y="5" width="14" height="14" rx="2"/>
             </svg>
           </button>
@@ -377,7 +387,7 @@ export default function Home() {
           <button
             type="submit"
             disabled={!inputText.trim()}
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] disabled:bg-slate-200 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-[#2563eb] hover:bg-[#1d4ed8] disabled:bg-gray-200 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
             title="Send"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -392,7 +402,7 @@ export default function Home() {
 
   // ── Render — one stable layout, content area switches ─────────────────────
   return (
-    <div className="flex h-screen overflow-hidden text-slate-900">
+    <div className="flex h-screen overflow-hidden text-gray-900">
 
       {/* Sidebar */}
       <Sidebar
@@ -411,27 +421,27 @@ export default function Home() {
       />
 
       {/* Main column */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-hidden ${isWelcome ? "bg-[#f0f4f9]" : "bg-white"}`}>
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden bg-white">
 
         {/* Header */}
-        <header className={`flex items-center gap-2 px-4 h-[52px] flex-shrink-0 ${isWelcome ? "bg-transparent" : "border-b border-slate-200 bg-white"}`}>
-          <button
-            onClick={() => setSidebarOpen((o) => !o)}
-            className="p-1.5 rounded-md text-slate-500 hover:text-slate-700 hover:bg-black/5 transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="3" y1="6"  x2="21" y2="6"/>
-              <line x1="3" y1="12" x2="21" y2="12"/>
-              <line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-          </button>
-          {!isWelcome && (
-            <h2 className="text-sm font-medium text-slate-700 truncate flex-1">
-              {activeConvo?.title || "IntelliDocs AI"}
-            </h2>
+        <header className={`flex items-center gap-2 px-4 h-[52px] flex-shrink-0 ${isWelcome ? "bg-transparent" : "border-b border-gray-200 bg-white"}`}>
+          {!sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen((o) => !o)}
+              className="p-1.5 rounded-md text-gray-500 hover:text-gray-700 hover:bg-black/5 transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                <line x1="3" y1="6"  x2="21" y2="6"/>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+              </svg>
+            </button>
           )}
+          <h2 className="text-[15px] font-semibold text-gray-900 truncate flex-1">
+            IntelliDocs AI
+          </h2>
           {isStreaming && (
-            <span className="text-2xs text-slate-400 flex items-center gap-1.5 ml-auto">
+            <span className="text-2xs text-gray-400 flex items-center gap-1.5 ml-auto">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               Generating
             </span>
@@ -452,11 +462,11 @@ export default function Home() {
         {isWelcome ? (
 
           /* ── Welcome: branded IntelliDocs AI ── */
-          <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
-            <div className="w-full max-w-[600px] flex flex-col items-center gap-7">
+          <div className="flex-1 flex flex-col items-center justify-end sm:justify-center px-4 pb-4 sm:pb-8">
+            <div className="w-full max-w-3xl flex flex-col items-center gap-4 sm:gap-7">
 
               {/* Brand mark */}
-              <div className="flex flex-col items-center gap-3 select-none">
+              <div className="order-1 flex flex-col items-center gap-3 select-none">
                 <div className="w-14 h-14 rounded-2xl bg-[#2563eb] flex items-center justify-center shadow-[0_4px_20px_rgb(37_99_235/0.3)]">
                   <svg width="28" height="28" viewBox="0 0 18 18" fill="none">
                     <rect x="1" y="2" width="11" height="14" rx="2" fill="white" opacity="0.95"/>
@@ -468,18 +478,18 @@ export default function Home() {
                   </svg>
                 </div>
                 <div className="text-center">
-                  <p className="text-[15px] font-semibold text-slate-900 tracking-tight">IntelliDocs AI</p>
-                  <p className="text-[12px] text-[#2563eb] font-medium mt-0.5">Ask anything. Know everything.</p>
+                  <p className="text-[15px] font-semibold text-gray-900 tracking-tight">IntelliDocs AI</p>
+                  <p className="text-[12px] text-gray-500 font-medium mt-0.5">Ask anything. Know everything.</p>
                 </div>
               </div>
 
               {/* Input */}
-              <div className="w-full">
+              <div className="order-3 sm:order-2 w-full">
                 {inputJSX}
               </div>
 
               {/* Chips */}
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="order-2 sm:order-3 flex flex-col gap-1 w-full sm:w-auto sm:flex-row sm:flex-wrap sm:justify-center sm:gap-2">
                 {[
                   {
                     label: "Upload a document",
@@ -516,7 +526,8 @@ export default function Home() {
                     key={chip.label}
                     type="button"
                     onClick={chip.action}
-                    className="flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 rounded-full text-sm text-slate-600 hover:bg-[#eff6ff] hover:border-[#bfdbfe] hover:text-[#2563eb] shadow-sm transition-colors select-none"
+                    className="flex items-center gap-3 w-full px-3 py-3 rounded-xl text-[14px] text-gray-700 hover:bg-gray-900/5 transition-colors select-none
+                      sm:w-auto sm:gap-1.5 sm:px-4 sm:py-2 sm:bg-white sm:border sm:border-gray-200 sm:rounded-full sm:text-sm sm:text-gray-600 sm:hover:bg-gray-50 sm:hover:border-gray-300 sm:hover:text-gray-900 sm:shadow-sm"
                   >
                     {chip.icon}
                     {chip.label}
@@ -550,7 +561,7 @@ export default function Home() {
             <div className="flex-shrink-0 bg-white px-4 py-2.5">
               <div className="max-w-3xl mx-auto">
                 {inputJSX}
-                <p className="text-center text-2xs text-slate-400 mt-2">
+                <p className="text-center text-2xs text-gray-400 mt-2">
                   Enter to send · Shift+Enter for newline
                 </p>
               </div>

@@ -19,16 +19,16 @@ function NavItem({ icon, label, onClick, badge, active }) {
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[14px] transition-colors text-left
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-[14px] font-normal transition-colors text-left
         ${active
-          ? "bg-slate-200/80 text-slate-900 font-medium"
-          : "text-slate-700 hover:bg-slate-200/60 font-normal"
+          ? "bg-gray-100 text-gray-900"
+          : "text-gray-700 hover:bg-gray-100"
         }`}
     >
-      <span className="flex-shrink-0 text-slate-500">{icon}</span>
+      <span className="flex-shrink-0 text-gray-500">{icon}</span>
       <span className="flex-1 truncate">{label}</span>
       {badge > 0 && (
-        <span className="text-2xs font-semibold text-[#2563eb] bg-[#eff6ff] px-1.5 py-0.5 rounded-full">
+        <span className="text-2xs font-semibold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">
           {badge}
         </span>
       )}
@@ -111,14 +111,14 @@ export default function Sidebar({
       <div
         key={conv.id}
         onClick={() => { onSelectChat(conv.id); setSearching(false); setSearchQuery(""); setOpenMenuId(null); }}
-        className={`group flex items-center gap-2 px-3 py-2.5 rounded-xl cursor-pointer transition-colors ${
+        className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer transition-colors ${
           isActive
-            ? "bg-slate-200/80 text-slate-900"
-            : "text-slate-600 hover:bg-slate-200/50 hover:text-slate-800"
+            ? "bg-gray-100 text-gray-900"
+            : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
         }`}
       >
         {conv.pinned && (
-          <span className="flex-shrink-0 text-[#2563eb] opacity-60 -ml-0.5">
+          <span className="flex-shrink-0 text-gray-400 -ml-0.5">
             <PinIcon size={10} />
           </span>
         )}
@@ -127,8 +127,8 @@ export default function Sidebar({
           onClick={(e) => handleMenuClick(e, conv.id)}
           className={`flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-lg transition-all
             ${isMenuOpen
-              ? "opacity-100 bg-slate-200 text-slate-700"
-              : "opacity-0 group-hover:opacity-100 text-slate-400 hover:bg-slate-200 hover:text-slate-700"
+              ? "opacity-100 bg-gray-200 text-gray-700"
+              : "opacity-0 group-hover:opacity-100 text-gray-400 hover:bg-gray-200 hover:text-gray-700"
             }`}
           title="More options"
         >
@@ -146,7 +146,7 @@ export default function Sidebar({
     <div
       ref={menuRef}
       style={{ position: "fixed", top: menuPos.top, right: menuPos.right, zIndex: 9999 }}
-      className="bg-white border border-slate-200/80 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.10)] py-1 min-w-[148px] animate-dropdown"
+      className="bg-white border border-gray-200 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.10)] py-1 min-w-[148px] animate-dropdown"
     >
       <button
         onClick={(e) => {
@@ -154,9 +154,9 @@ export default function Sidebar({
           onPinChat?.(openMenuId);
           setOpenMenuId(null);
         }}
-        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-slate-700 hover:bg-slate-100 transition-colors rounded-t-lg"
+        className="w-full flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-gray-700 hover:bg-gray-100 transition-colors rounded-t-lg"
       >
-        <span className="text-slate-500">
+        <span className="text-gray-500">
           {conversations.find((c) => c.id === openMenuId)?.pinned ? (
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="2" y1="2" x2="22" y2="22"/>
@@ -171,7 +171,7 @@ export default function Sidebar({
         {conversations.find((c) => c.id === openMenuId)?.pinned ? "Unpin chat" : "Pin chat"}
       </button>
 
-      <div className="my-0.5 h-px bg-slate-100 mx-2" />
+      <div className="my-0.5 h-px bg-gray-100 mx-2" />
 
       <button
         onClick={(e) => {
@@ -194,10 +194,22 @@ export default function Sidebar({
   );
 
   return (
-    <aside
-      className={`${isOpen ? "w-[260px]" : "w-0"} transition-[width] duration-200 overflow-hidden flex-shrink-0 bg-[#f9f9f9] flex flex-col h-full`}
-    >
-      <div className="flex flex-col h-full min-w-[260px]">
+    <>
+      {/* Mobile backdrop — closes the drawer when tapped outside it */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-30 md:hidden"
+          onClick={onToggle}
+        />
+      )}
+
+      <aside
+        className={`fixed md:relative inset-y-0 left-0 z-40 h-full flex-shrink-0 bg-white border-r border-gray-200 flex flex-col overflow-hidden
+          transition-transform md:transition-[width] duration-200
+          ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0
+          w-[260px] ${isOpen ? "md:w-[260px]" : "md:w-0"}`}
+      >
+      <div className="flex flex-col h-full w-[260px]">
 
         {/* ── Top row: logo + collapse toggle ──────────────────────────── */}
         <div className="flex items-center justify-between px-3 pt-4 pb-3">
@@ -205,13 +217,13 @@ export default function Sidebar({
             <div className="w-8 h-8 rounded-xl bg-[#2563eb] flex items-center justify-center shadow-sm flex-shrink-0">
               <SparkMark size={17} />
             </div>
-            <span className="text-[13.5px] font-semibold text-slate-900 tracking-tight">
+            <span className="text-[13.5px] font-semibold text-gray-900 tracking-tight">
               IntelliDocs AI
             </span>
           </div>
           <button
             onClick={onToggle}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-200/70 transition-colors"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
             title="Close sidebar"
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -267,26 +279,26 @@ export default function Sidebar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search conversations…"
-              className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-[13px] text-slate-700 placeholder-slate-400 outline-none focus:border-[#2563eb] transition-colors"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-[13px] text-gray-700 placeholder-gray-400 outline-none focus:border-gray-400 transition-colors"
             />
           </div>
         )}
 
         {/* ── Documents panel ───────────────────────────────────────────── */}
         {docsOpen && (
-          <div className="mx-2 mb-1 bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
-              <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+          <div className="mx-2 mb-1 bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-100">
+              <p className="text-[11px] font-semibold text-gray-500">
                 Documents
               </p>
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="text-[11px] font-semibold text-[#2563eb] hover:text-[#1d4ed8] disabled:opacity-40 transition-colors"
+                className="text-[11px] font-semibold text-gray-700 hover:text-gray-900 disabled:opacity-40 transition-colors"
               >
                 {uploading ? (
                   <span className="flex items-center gap-1">
-                    <span className="w-3 h-3 border border-[#2563eb] border-t-transparent rounded-full animate-spin inline-block" />
+                    <span className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin inline-block" />
                     Uploading…
                   </span>
                 ) : "+ Upload"}
@@ -301,24 +313,24 @@ export default function Sidebar({
             </div>
 
             {documents.length === 0 ? (
-              <p className="text-[12px] text-slate-400 italic px-3 py-3">No documents yet</p>
+              <p className="text-[12px] text-gray-400 italic px-3 py-3">No documents yet</p>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-gray-50">
                 {documents.map((doc, i) => (
                   <div key={i} className="flex items-center gap-2 px-3 py-2.5">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" className="flex-shrink-0">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                       <polyline points="14 2 14 8 20 8"/>
                     </svg>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[12px] text-slate-700 font-medium truncate">{doc.filename}</p>
+                      <p className="text-[12px] text-gray-700 font-medium truncate">{doc.filename}</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         {doc.file_type && (
-                          <span className="text-[9px] font-semibold uppercase tracking-wide text-[#2563eb] bg-[#eff6ff] px-1.5 py-0.5 rounded">
+                          <span className="text-[9px] font-semibold uppercase tracking-wide text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded">
                             {doc.file_type}
                           </span>
                         )}
-                        <p className="text-[10px] text-slate-400">{doc.chunks} chunks</p>
+                        <p className="text-[10px] text-gray-400">{doc.chunks} chunks</p>
                       </div>
                     </div>
                   </div>
@@ -341,7 +353,7 @@ export default function Sidebar({
 
           {pinned.length > 0 && (
             <>
-              <p className="text-[11px] font-semibold text-slate-500 px-3 pb-2 uppercase tracking-wider">
+              <p className="text-[12px] font-semibold text-gray-500 px-3 pb-2">
                 Pinned
               </p>
               <div className="space-y-0.5 mb-3">
@@ -352,7 +364,7 @@ export default function Sidebar({
 
           {regular.length > 0 && (
             <>
-              <p className="text-[11px] font-semibold text-slate-500 px-3 pb-2 uppercase tracking-wider">
+              <p className="text-[12px] font-semibold text-gray-500 px-3 pb-2">
                 {searchQuery ? "Results" : pinned.length > 0 ? "Recent" : "Recents"}
               </p>
               <div className="space-y-0.5">
@@ -362,22 +374,23 @@ export default function Sidebar({
           )}
 
           {filtered.length === 0 && searchQuery && (
-            <p className="text-[12px] text-slate-400 italic px-3 py-2">No conversations found</p>
+            <p className="text-[12px] text-gray-400 italic px-3 py-2">No conversations found</p>
           )}
           {filtered.length === 0 && !searchQuery && (
-            <p className="text-[12px] text-slate-400 italic px-3 py-2">No conversations yet</p>
+            <p className="text-[12px] text-gray-400 italic px-3 py-2">No conversations yet</p>
           )}
         </div>
 
         {/* ── Footer ────────────────────────────────────────────────────── */}
-        <div className="px-4 py-3 flex items-center gap-2 border-t border-slate-200/60">
+        <div className="px-4 py-3 flex items-center gap-2 border-t border-gray-200">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
-          <p className="text-[11px] text-slate-400">Groq · NVIDIA NIM</p>
+          <p className="text-[11px] text-gray-400">Groq · NVIDIA NIM</p>
         </div>
 
       </div>
 
       {dropdown}
-    </aside>
+      </aside>
+    </>
   );
 }

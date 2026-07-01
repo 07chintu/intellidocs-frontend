@@ -7,6 +7,7 @@ export default function App({ Component, pageProps }) {
       <Head>
         <title>IntelliDocs AI</title>
         <meta name="description" content="Chat with your documents using AI" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
       <Component {...pageProps} />
     </>

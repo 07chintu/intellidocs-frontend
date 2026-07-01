@@ -19,12 +19,16 @@ function AIAvatar() {
   );
 }
 
-function TypingDots() {
+function ThinkingAvatar() {
   return (
-    <div className="flex items-center gap-1 py-1">
-      <span className="w-1.5 h-1.5 rounded-full bg-slate-300 typing-dot" />
-      <span className="w-1.5 h-1.5 rounded-full bg-slate-300 typing-dot" />
-      <span className="w-1.5 h-1.5 rounded-full bg-slate-300 typing-dot" />
+    <div className="w-7 h-7 rounded-full border-2 border-gray-200 border-t-gray-400 animate-spin flex-shrink-0 mt-0.5" />
+  );
+}
+
+function ThinkingText() {
+  return (
+    <div className="flex items-center py-1">
+      <span className="thinking-shimmer text-[15px] font-medium">Thinking…</span>
     </div>
   );
 }
@@ -44,17 +48,17 @@ function CodeBlock({ className, children }) {
   }
 
   return (
-    <div className="code-block-card my-4 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+    <div className="code-block-card my-4 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
 
       {/* ── Header ── */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-200">
-        <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest select-none">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-200">
+        <span className="text-[11px] font-semibold text-gray-400 uppercase tracking-widest select-none">
           {label}
         </span>
 
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 text-[12px] font-medium text-slate-500 hover:text-slate-800 px-2 py-1 rounded-md hover:bg-slate-100 transition-all select-none"
+          className="flex items-center gap-1.5 text-[12px] font-medium text-gray-500 hover:text-gray-800 px-2 py-1 rounded-md hover:bg-gray-100 transition-all select-none"
         >
           {copied ? (
             <>
@@ -196,7 +200,7 @@ function MetricsBadge({ metrics }) {
     <div className="mt-2 select-none">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 text-[10px] text-slate-400 hover:text-slate-500 transition-colors"
+        className="flex items-center gap-1.5 text-[10px] text-gray-400 hover:text-gray-500 transition-colors"
       >
         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
           <circle cx="12" cy="12" r="10"/>
@@ -215,8 +219,8 @@ function MetricsBadge({ metrics }) {
       {open && (
         <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
           {items.map(({ key, label }) => (
-            <span key={key} className="text-[10px] text-slate-400">
-              <span className="font-medium text-slate-500">{label}</span> {metrics[key]}ms
+            <span key={key} className="text-[10px] text-gray-400">
+              <span className="font-medium text-gray-500">{label}</span> {metrics[key]}ms
             </span>
           ))}
         </div>
@@ -231,21 +235,23 @@ function ChatMessage({ role, text, sources = [], streaming = false, queryType, m
   if (isUser) {
     return (
       <div className="flex justify-end msg-animate">
-        <div className="max-w-[72%] bg-slate-100 text-slate-900 rounded-2xl rounded-br-md px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words">
+        <div className="max-w-[88%] sm:max-w-[75%] bg-gray-100 text-gray-900 rounded-2xl rounded-br-md px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap break-words">
           {text}
         </div>
       </div>
     );
   }
 
+  const isThinking = streaming && !text;
+
   return (
     <div className="flex items-start gap-3 msg-animate">
-      <AIAvatar />
+      {isThinking ? <ThinkingAvatar /> : <AIAvatar />}
 
       <div className="flex-1 min-w-0 pt-0.5">
 
-        {streaming && !text ? (
-          <TypingDots />
+        {isThinking ? (
+          <ThinkingText />
         ) : (
           <div className="markdown-content">
             <ReactMarkdown components={MD_COMPONENTS}>{text || ""}</ReactMarkdown>
@@ -255,12 +261,12 @@ function ChatMessage({ role, text, sources = [], streaming = false, queryType, m
 
         {!streaming && queryType === "DOCUMENT_QUERY" && sources.length > 0 && (
           <>
-            <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-slate-100">
+            <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-gray-100">
               {sources.map((src, i) => (
                 <SourceBadge key={i} filename={src.filename} page={src.page} score={src.score} />
               ))}
             </div>
-            <p className="text-[11px] text-slate-400 mt-2 flex items-center gap-1.5">
+            <p className="text-[11px] text-gray-400 mt-2 flex items-center gap-1.5">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
